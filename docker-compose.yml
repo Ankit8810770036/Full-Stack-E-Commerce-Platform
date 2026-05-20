@@ -1,0 +1,53 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ecommerce
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ecommerce_users
+    depends_on:
+      - mongodb
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ecommerce_products
+    depends_on:
+      - mongodb
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8085:8080"
+    environment:
+      USER_SERVICE_URI: http://user-service:8080
+      PRODUCT_SERVICE_URI: http://product-service:8080
+    depends_on:
+      - user-service
+      - product-service
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+
+volumes:
+  mongo-data:

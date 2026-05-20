@@ -1,0 +1,48 @@
+# ========================
+# Frontend (Node / Vite)
+# ========================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.vite-temp/
+
+# ========================
+# Backend (Maven / Java)
+# ========================
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/.mvn/wrapper/maven-wrapper.jar
+
+# ========================
+# IDE & Editor
+# ========================
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+*.swp
+.DS_Store
+Thumbs.db
+
+# ========================
+# Docker
+# ========================
+# Keep docker-compose.yml tracked, ignore override files
+docker-compose.override.yml
+
+# ========================
+# Environment & Secrets
+# ========================
+.env
+.env.local
+.env.*.local
+
+# ========================
+# Logs
+# ========================
+*.log
+logs/
