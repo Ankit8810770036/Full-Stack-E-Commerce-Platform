@@ -6,7 +6,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME_PREFIX: ${{ github.repository }}
+  # Hardcoded lowercase to satisfy GHCR's all-lowercase requirement
+  IMAGE_BASE: ghcr.io/ankit8810770036/full-stack-e-commerce-platform
 
 jobs:
   build-and-push:
@@ -26,19 +27,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}
-
       # Build and Push User Service
       - name: Build and push User Service
         uses: docker/build-push-action@v5
         with:
           context: ./user-service
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}/user-service:latest
+          tags: ${{ env.IMAGE_BASE }}/user-service:latest
 
       # Build and Push Product Service
       - name: Build and push Product Service
@@ -46,7 +41,7 @@ jobs:
         with:
           context: ./product-service
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}/product-service:latest
+          tags: ${{ env.IMAGE_BASE }}/product-service:latest
 
       # Build and Push API Gateway
       - name: Build and push API Gateway
@@ -54,7 +49,7 @@ jobs:
         with:
           context: ./api-gateway
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}/api-gateway:latest
+          tags: ${{ env.IMAGE_BASE }}/api-gateway:latest
 
       # Build and Push Frontend React App
       - name: Build and push Frontend
@@ -62,4 +57,4 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_PREFIX }}/frontend:latest
+          tags: ${{ env.IMAGE_BASE }}/frontend:latest
