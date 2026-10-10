@@ -1,11 +1,22 @@
 server:
-  port: 8080
+  port: ${PORT:8085}
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
 
 spring:
   application:
     name: api-gateway
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 3000
+        response-timeout: 10s
+        pool:
+          type: ELASTIC
+          max-connections: 500
+          max-idle-time: 10000
       globalcors:
         cors-configurations:
           '[/**]':
@@ -32,3 +43,20 @@ spring:
           uri: ${PRODUCT_SERVICE_URI:http://localhost:8082}
           predicates:
             - Path=/api/products/**
+
+        - id: order-service
+          uri: ${ORDER_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/api/orders/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+

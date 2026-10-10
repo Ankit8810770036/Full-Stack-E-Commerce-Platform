@@ -1,5 +1,9 @@
 server:
-  port: 8080
+  port: ${PORT:8081}
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
 
 spring:
   application:
@@ -7,8 +11,21 @@ spring:
   data:
     mongodb:
       uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/ecommerce_users}
+      auto-index-creation: true
 
 app:
   jwt:
-    secret: 9a4f2c8d3b7a1e5f8g2h6k9l0m3n1o2p5q8r0s3t6u9v2w5x8y1z4a7b0c3d6e9f
-    expirationMs: 86400000 # 24 hours
+    secret: ${JWT_SECRET:9a4f2c8d3b7a1e5f8g2h6k9l0m3n1o2p5q8r0s3t6u9v2w5x8y1z4a7b0c3d6e9f}
+    expirationMs: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+

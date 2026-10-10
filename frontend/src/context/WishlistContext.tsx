@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import type { Product } from '../types';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
@@ -15,19 +15,31 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const [wishlist, setWishlist] = useState<Product[]>([]);
-
   // LocalStorage key unique to logged-in user or guest
-  const storageKey = user ? `wishlist_${user.username}` : 'wishlist_guest';
+  const storageKey = user && user.username ? `wishlist_${user.username}` : 'wishlist_guest';
 
-  useEffect(() => {
-    const stored = localStorage.getItem(storageKey);
-    if (stored) {
-      setWishlist(JSON.parse(stored));
-    } else {
-      setWishlist([]);
+  const readWishlistFromStorage = (key: string): Product[] => {
+    try {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          return parsed.filter(p => p && (p.id || p.name));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse wishlist:', e);
+      localStorage.removeItem(key);
     }
-  }, [storageKey]);
+    return [];
+  };
+
+  const [wishlist, setWishlist] = useState<Product[]>(() => readWishlistFromStorage(storageKey));
+  const [prevKey, setPrevKey] = useState(storageKey);
+  if (prevKey !== storageKey) {
+    setPrevKey(storageKey);
+    setWishlist(readWishlistFromStorage(storageKey));
+  }
 
   const saveWishlist = (newWishlist: Product[]) => {
     setWishlist(newWishlist);
@@ -35,10 +47,11 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const toggleWishlist = (product: Product) => {
-    if (!product.id) return;
-    const exists = wishlist.some((item) => item.id === product.id);
+    if (!product || (!product.id && !product.name)) return;
+    const pId = product.id || product.name;
+    const exists = wishlist.some((item) => (item.id || item.name) === pId);
     if (exists) {
-      const filtered = wishlist.filter((item) => item.id !== product.id);
+      const filtered = wishlist.filter((item) => (item.id || item.name) !== pId);
       saveWishlist(filtered);
       showToast(`Removed "${product.name}" from Wishlist`, 'info');
     } else {
@@ -48,7 +61,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const isInWishlist = (productId: string) => {
-    return wishlist.some((item) => item.id === productId);
+    return wishlist.some((item) => (item.id || item.name) === productId);
   };
 
   const clearWishlist = () => {

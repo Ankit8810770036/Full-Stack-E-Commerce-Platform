@@ -3,43 +3,72 @@ services:
     image: mongo:7.0
     container_name: mongodb
     ports:
-      - "27017:27017"
+      - "27017:27017" 
     volumes:
       - mongo-data:/data/db
     environment:
       MONGO_INITDB_DATABASE: ecommerce
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\" --quiet || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
 
   user-service:
     build: ./user-service
     container_name: user-service
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ecommerce_users
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
 
   product-service:
     build: ./product-service
     container_name: product-service
     ports:
-      - "8082:8080"
+      - "8082:8082"
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ecommerce_products
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ecommerce_orders
+      PRODUCT_SERVICE_URI: http://product-service:8082
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+    restart: unless-stopped
 
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
     ports:
-      - "8085:8080"
+      - "8085:8085"
     environment:
-      USER_SERVICE_URI: http://user-service:8080
-      PRODUCT_SERVICE_URI: http://product-service:8080
+      USER_SERVICE_URI: http://user-service:8081
+      PRODUCT_SERVICE_URI: http://product-service:8082
+      ORDER_SERVICE_URI: http://order-service:8083
     depends_on:
       - user-service
       - product-service
+      - order-service
+    restart: unless-stopped
 
   frontend:
     build: ./frontend
@@ -48,6 +77,8 @@ services:
       - "3000:3000"
     depends_on:
       - api-gateway
+    restart: unless-stopped
 
 volumes:
   mongo-data:
+

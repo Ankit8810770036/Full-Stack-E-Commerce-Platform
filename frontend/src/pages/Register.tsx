@@ -34,10 +34,11 @@ const Register: React.FC = () => {
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
+      const apiErr = err as { response?: { data?: { message?: string } } };
       setError(
-        err.response?.data?.message ||
+        apiErr.response?.data?.message ||
         'Registration failed. Username or email might be taken.'
       );
       setLoading(false);

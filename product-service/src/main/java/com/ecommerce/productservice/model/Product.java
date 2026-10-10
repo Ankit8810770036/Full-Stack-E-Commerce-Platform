@@ -1,19 +1,31 @@
 package com.ecommerce.productservice.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 
 @Document(collection = "products")
+@CompoundIndex(name = "category_name_idx", def = "{'category': 1, 'name': 1}")
 public class Product {
     @Id
     private String id;
+
+    @TextIndexed(weight = 3)
     private String name;
+
+    @TextIndexed(weight = 1)
     private String description;
+
     private BigDecimal price;
     private String imageUrl;
+
+    @Indexed
     private String category;
+
     private Integer stock;
 
     public Product() {

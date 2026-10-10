@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import api from '../api';
-import { LogIn, Lock, User as UserIcon } from 'lucide-react';
+import { LogIn, Lock, User as UserIcon, ShieldAlert, KeyRound } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -11,6 +12,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { login } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,16 +24,25 @@ const Login: React.FC = () => {
       const response = await api.post('/api/auth/login', { username, password });
       const { token, email, roles } = response.data;
       login(token, response.data.username, email, roles);
+      showToast(`Welcome back, ${response.data.username}!`, 'success');
       navigate('/');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
+      const apiErr = err as { response?: { data?: { message?: string } } };
       setError(
-        err.response?.data?.message ||
-        'Authentication failed. Please verify credentials.'
+        apiErr.response?.data?.message ||
+        'Authentication failed. Please check your credentials.'
       );
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFillDemo = (userVal: string, passVal: string, roleName: string) => {
+    setUsername(userVal);
+    setPassword(passVal);
+    setError(null);
+    showToast(`Filled ${roleName} credentials. Click "Sign In"!`, 'info');
   };
 
   return (
@@ -41,8 +52,34 @@ const Login: React.FC = () => {
           <div className="icon-wrapper">
             <LogIn size={24} />
           </div>
-          <h2>Welcome Back</h2>
-          <p>Login to access your profile and shopping cart.</p>
+          <h2>Welcome to Cartify</h2>
+          <p>Sign in to manage orders, wishlists, and checkout.</p>
+        </div>
+
+        {/* 1-Click Demo Credentials Box */}
+        <div className="demo-credentials-box">
+          <div className="demo-credentials-header">
+            <KeyRound size={14} className="key-icon" />
+            <span>Quick Demo Credentials</span>
+          </div>
+          <div className="demo-credentials-buttons">
+            <button
+              type="button"
+              className="btn-demo-badge admin"
+              onClick={() => handleFillDemo('admin', 'admin123', 'Administrator')}
+            >
+              <ShieldAlert size={12} />
+              <span>Admin (admin / admin123)</span>
+            </button>
+            <button
+              type="button"
+              className="btn-demo-badge shopper"
+              onClick={() => handleFillDemo('alex_shopper', 'password123', 'Shopper')}
+            >
+              <UserIcon size={12} />
+              <span>Shopper (alex_shopper / password123)</span>
+            </button>
+          </div>
         </div>
 
         {error && <div className="alert-error">{error}</div>}
@@ -79,13 +116,13 @@ const Login: React.FC = () => {
           </div>
 
           <button type="submit" className="btn-auth-submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Sign In'}
+            {loading ? 'Authenticating...' : 'Sign In'}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            New here? <Link to="/register">Create an account</Link>
+            New to Cartify? <Link to="/register">Create an account</Link>
           </p>
         </div>
       </div>

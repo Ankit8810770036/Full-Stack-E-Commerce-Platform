@@ -1,18 +1,35 @@
 package com.ecommerce.userservice.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Document(collection = "users")
 public class User {
     @Id
     private String id;
+
+    @Indexed(unique = true)
     private String username;
+
+    @Indexed(unique = true)
     private String email;
+
     private String password;
     private Set<String> roles;
+
+    private String fullName;
+    private String phone;
+    private String gender;
+    private String dob;
+    private String alternatePhone;
+    private List<String> upiIds = new ArrayList<>();
+    private String preferredPayment = "UPI";
+    private List<Address> addresses = new ArrayList<>();
 
     public User() {
     }
@@ -69,6 +86,70 @@ public class User {
         this.roles = roles;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getAlternatePhone() {
+        return alternatePhone;
+    }
+
+    public void setAlternatePhone(String alternatePhone) {
+        this.alternatePhone = alternatePhone;
+    }
+
+    public List<String> getUpiIds() {
+        return upiIds;
+    }
+
+    public void setUpiIds(List<String> upiIds) {
+        this.upiIds = upiIds;
+    }
+
+    public String getPreferredPayment() {
+        return preferredPayment;
+    }
+
+    public void setPreferredPayment(String preferredPayment) {
+        this.preferredPayment = preferredPayment;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
     public static class UserBuilder {
         private String id;
         private String username;
@@ -105,7 +186,8 @@ public class User {
         }
 
         public User build() {
-            return new User(id, username, email, password, roles);
+            User user = new User(id, username, email, password, roles);
+            return user;
         }
     }
 }

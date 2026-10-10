@@ -1,73 +1,44 @@
-# React + TypeScript + Vite
+# Cartify - React Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the modern single-page application (SPA) for **Cartify**, built using **React 19**, **TypeScript**, and **Vite**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Key Highlights
 
-## React Compiler
+- **Vite + React 19 + TypeScript**: Sub-second Hot Module Replacement (HMR) and strict compile-time type safety.
+- **Vanilla CSS Design System**: Responsive, zero-runtime overhead styling with CSS custom properties, glassmorphism, and fluid micro-animations.
+- **Route-Level Code Splitting**: Utilizes `React.lazy()` and `Suspense` for asynchronous bundle loading of pages (`Home`, `ProductDetail`, `Cart`, `Orders`, `Profile`, `ProductAdmin`).
+- **Client-Side In-Memory Caching**: Implements a transparent 60-second TTL GET request cache with automatic invalidation on mutating requests (`POST`, `PUT`, `DELETE`).
+- **Resilient Media Loading**: Image fallbacks and dynamic high-resolution Unsplash asset integration.
+- **Nginx Production Container**: Multi-stage Dockerized build with client-side SPA route fallbacks (`try_files $uri /index.html`) and reverse-proxy pass to `api-gateway`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Local Development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Start Vite development server (Default: http://localhost:5173)
+npm run dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Run TypeScript type check and production bundle build
+npm run build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Preview production build locally
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🐳 Docker Container Execution
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The frontend is containerized via a multi-stage Docker build:
+
+```bash
+# From the project root:
+docker compose up -d frontend
 ```
+The production container is accessible at **[http://localhost:3000](http://localhost:3000)**.

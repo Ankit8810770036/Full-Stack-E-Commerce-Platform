@@ -6,7 +6,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # Hardcoded lowercase to satisfy GHCR's all-lowercase requirement
   IMAGE_BASE: ghcr.io/ankit8810770036/full-stack-e-commerce-platform
 
 jobs:
@@ -42,6 +41,14 @@ jobs:
           context: ./product-service
           push: true
           tags: ${{ env.IMAGE_BASE }}/product-service:latest
+
+      # Build and Push Order Service
+      - name: Build and push Order Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./order-service
+          push: true
+          tags: ${{ env.IMAGE_BASE }}/order-service:latest
 
       # Build and Push API Gateway
       - name: Build and push API Gateway

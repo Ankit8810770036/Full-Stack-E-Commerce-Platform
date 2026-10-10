@@ -30,11 +30,23 @@ jobs:
           cd product-service
           mvn clean verify -DskipTests
 
+      - name: Build & Test Order Service
+        run: |
+          cd order-service
+          mvn clean verify -DskipTests
+
       - name: Build & Test API Gateway
         run: |
           cd api-gateway
           mvn clean verify -DskipTests
 
+      - name: Verify Frontend Build
+        run: |
+          cd frontend
+          npm ci || npm install
+          npm run build
+
       - name: Verify Docker Compose Build
         run: |
           docker compose build --no-cache
+

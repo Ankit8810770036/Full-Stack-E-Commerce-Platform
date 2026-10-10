@@ -1,5 +1,8 @@
 package com.ecommerce.userservice.dto;
 
+import com.ecommerce.userservice.model.Address;
+
+import java.util.List;
 import java.util.Set;
 
 public class UserProfileResponse {
@@ -7,15 +10,16 @@ public class UserProfileResponse {
     private String username;
     private String email;
     private Set<String> roles;
+    private String fullName;
+    private String phone;
+    private String gender;
+    private String dob;
+    private String alternatePhone;
+    private List<String> upiIds;
+    private String preferredPayment;
+    private List<Address> addresses;
 
     public UserProfileResponse() {
-    }
-
-    public UserProfileResponse(String id, String username, String email, Set<String> roles) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.roles = roles;
     }
 
     public static UserProfileResponseBuilder builder() {
@@ -54,11 +58,83 @@ public class UserProfileResponse {
         this.roles = roles;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getAlternatePhone() {
+        return alternatePhone;
+    }
+
+    public void setAlternatePhone(String alternatePhone) {
+        this.alternatePhone = alternatePhone;
+    }
+
+    public List<String> getUpiIds() {
+        return upiIds;
+    }
+
+    public void setUpiIds(List<String> upiIds) {
+        this.upiIds = upiIds;
+    }
+
+    public String getPreferredPayment() {
+        return preferredPayment;
+    }
+
+    public void setPreferredPayment(String preferredPayment) {
+        this.preferredPayment = preferredPayment;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
     public static class UserProfileResponseBuilder {
         private String id;
         private String username;
         private String email;
         private Set<String> roles;
+        private String fullName;
+        private String phone;
+        private String gender;
+        private String dob;
+        private String alternatePhone;
+        private List<String> upiIds;
+        private String preferredPayment;
+        private List<Address> addresses;
 
         UserProfileResponseBuilder() {
         }
@@ -83,8 +159,61 @@ public class UserProfileResponse {
             return this;
         }
 
+        public UserProfileResponseBuilder fullName(String fullName) {
+            this.fullName = fullName;
+            return this;
+        }
+
+        public UserProfileResponseBuilder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public UserProfileResponseBuilder gender(String gender) {
+            this.gender = gender;
+            return this;
+        }
+
+        public UserProfileResponseBuilder dob(String dob) {
+            this.dob = dob;
+            return this;
+        }
+
+        public UserProfileResponseBuilder alternatePhone(String alternatePhone) {
+            this.alternatePhone = alternatePhone;
+            return this;
+        }
+
+        public UserProfileResponseBuilder upiIds(List<String> upiIds) {
+            this.upiIds = upiIds;
+            return this;
+        }
+
+        public UserProfileResponseBuilder preferredPayment(String preferredPayment) {
+            this.preferredPayment = preferredPayment;
+            return this;
+        }
+
+        public UserProfileResponseBuilder addresses(List<Address> addresses) {
+            this.addresses = addresses;
+            return this;
+        }
+
         public UserProfileResponse build() {
-            return new UserProfileResponse(id, username, email, roles);
+            UserProfileResponse response = new UserProfileResponse();
+            response.setId(id);
+            response.setUsername(username);
+            response.setEmail(email);
+            response.setRoles(roles);
+            response.setFullName(fullName);
+            response.setPhone(phone);
+            response.setGender(gender);
+            response.setDob(dob);
+            response.setAlternatePhone(alternatePhone);
+            response.setUpiIds(upiIds);
+            response.setPreferredPayment(preferredPayment);
+            response.setAddresses(addresses);
+            return response;
         }
     }
 }

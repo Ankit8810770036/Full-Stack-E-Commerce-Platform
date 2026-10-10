@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: cartify
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secrets.yaml
+  - mongodb.yaml
+  - user-service.yaml
+  - product-service.yaml
+  - order-service.yaml
+  - api-gateway.yaml
+  - frontend.yaml
+  - ingress.yaml
